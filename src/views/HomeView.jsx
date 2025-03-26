@@ -1,11 +1,27 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Login from "./LoginView";
+import {onAuthStateChanged} from "firebase/auth";
+import {auth} from "../firebase.js";
 
 function Home() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const listen = onAuthStateChanged(auth, (firebaseUser) => updateValues(firebaseUser))
+
+    function updateValues(firebaseUser) {
+        setIsLoggedIn(!!firebaseUser);
+    }
+
+    useEffect(() => {
+        return () => {
+        };
+    }, [listen]);
+
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-3xl font-bold mb-6">Welcome to Home</h1>
-            <Login />
+        <div>
+            {!isLoggedIn ? <Login/> :
+                <div></div>}
+
         </div>
     );
 }
