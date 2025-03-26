@@ -1,12 +1,128 @@
 import {useNavigate} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {auth, db} from "../firebase.js";
+import {onAuthStateChanged, signOut} from "firebase/auth";
+import {collection, addDoc, query, where, getDocs} from "firebase/firestore";
 
 function Dashboard() {
     const navigate = useNavigate();
+
+    const dbPath = "short_links"
+
+    const [uid, setUid] = useState('');
+    const [longLink, setLongLink] = useState('');
+    const [longLinkTitle, setLongLinkTitle] = useState('');
+    const [userLinks, setUserLinks] = useState(null);
+
+    const baseUrl = () => {
+        // return 'http://' + process.env.VUE_APP_URL +':' + process.env.VUE_APP_PORT + '/r/'
+        return 'http://' + 'localhost' + ':' + '5173' + '/r/'
+    };
+
+    const listen = onAuthStateChanged(auth, function (user) {
+        setUid(user.uid)
+        if (uid && !userLinks) {
+            getAllLinksForUser()
+        }
+        if (!user) {
+            goToHome()
+        }
+    });
+
+    useEffect(() => {
+        return () => {
+        };
+    }, [listen]);
+
+    const getAllLinksForUser = async () => {
+        const q = query(collection(db, dbPath), where("owner", "==", uid));
+        const querySnapshot = await getDocs(q);
+        let userLinksList = []
+        querySnapshot.forEach((doc) => {
+            let link = {}
+            link['id'] = doc.id
+            link['data'] = doc.data()
+            userLinksList.push(link)
+        });
+        setUserLinks(userLinksList);
+    }
+
+    async function createShortLink() {
+        await addDoc(collection(db, dbPath), {
+            owner: uid,
+            link_title: longLinkTitle,
+            url: longLink,
+        });
+        setLongLink('');
+        await getAllLinksForUser()
+    }
+
+    function ListOfLinks() {
+        return (
+            <div>
+                {userLinks &&
+                    userLinks.map(({id, data}) => {
+                        return (
+                            <div>
+                                <div className="center">
+                                    <h5>{data.link_title}</h5>
+                                </div>
+                                <div className="center">
+                                    <button
+                                        className="btn-link"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(baseUrl() + id)
+                                        }}>
+                                        {baseUrl() + id}
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
+            </div>
+        );
+    }
+
+
+    const handleSignOut = () => {
+        signOut(auth).then(() => goToHome())
+    }
+
+    function goToHome() {
+        navigate('/')
+    }
+
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            <button onClick={() => navigate('/')} className="px-4 py-2 bg-green-500 text-white rounded-lg">Back to Home</button>
+        <div className="parent">
+            <div className="center padded-bot">
+                <button className="btn btn-large" onClick={handleSignOut}> Logout</button>
+            </div>
+
+            <div className="padded center">
+                <label className="label">Name your link
+                    <input
+                        value={longLinkTitle}
+                        placeholder="Title"
+                        onChange={(e) => setLongLinkTitle(e.target.value)}
+                        size="42"
+                    /></label>
+            </div>
+
+            <div className="padded-bot center">
+                <label className="label">
+                    Paste your link here
+                    <textarea
+                        rows="7"
+                        value={longLink}
+                        className="input"
+                        onChange={(e) => setLongLink(e.target.value)}
+                    /></label>
+            </div>
+            <div className="padded center">
+                <button onClick={createShortLink} className="btn">Create Short Link</button>
+            </div>
+
+            <ListOfLinks/>
         </div>
     );
 }

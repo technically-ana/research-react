@@ -5,6 +5,7 @@
 html *
 {
   font-family: "Courier 10 Pitch", sans-serif !important;
+  color: black;
 }
 p {
   font-size: 14px;
@@ -95,4 +96,63 @@ ul li {
 
 .question-container {
   padding: 8px;
+}
+
+.btn-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  color: #069;
+  cursor: pointer;
+}
+
+textarea {
+  width: 100%;
+  height: auto;
+}
+
+#parent {
+  text-align: center;
+  height: 400px;
+  width: 600px;
+}
+
+.block {
+  height: 100px;
+  width: 200px;
+  text-align: left;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  justify-content: left;
+  align-items: start;
+}
+
+input, label {
+  display:block;
+}
+
+.padded {
+  padding: 24px;
+}
+
+.padded-bot {
+  padding-bottom: 24px;
+}
+
+.right {
+  display: flex;
+  justify-content: right;
+  align-items: end;
+}
+
+.error-text {
+  color: #cb3436;
 }
