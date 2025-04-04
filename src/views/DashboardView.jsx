@@ -15,8 +15,8 @@ function Dashboard() {
     const [userLinks, setUserLinks] = useState(null);
 
     const baseUrl = () => {
-        // return 'http://' + process.env.VUE_APP_URL +':' + process.env.VUE_APP_PORT + '/r/'
-        return 'http://' + 'localhost' + ':' + '5173' + '/r/'
+        let base = process.env.REACT_APP_URL
+        return base + 'r/'
     };
 
     const listen = onAuthStateChanged(auth, function (user) {
