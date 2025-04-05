@@ -14,7 +14,7 @@ function Login() {
 
 
     function goToDashboard(uidString) {
-        navigate('/dashboard')
+        navigate(`/dashboard/${uidString}`)
     }
 
     function sendEmailAndGoToDashboard(userCredentials) {
