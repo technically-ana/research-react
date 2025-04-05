@@ -1,4 +1,4 @@
-import {useNavigate} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {auth, db} from "../firebase.js";
 import {onAuthStateChanged, signOut} from "firebase/auth";
@@ -7,12 +7,15 @@ import {collection, addDoc, query, where, getDocs} from "firebase/firestore";
 function Dashboard() {
     const navigate = useNavigate();
 
+    const {id} = useParams();
+
     const dbPath = "short_links"
 
     const [uid, setUid] = useState('');
     const [longLink, setLongLink] = useState('');
     const [longLinkTitle, setLongLinkTitle] = useState('');
     const [userLinks, setUserLinks] = useState(null);
+    // const [errorMessage, setErrorMessage] = useState('');
 
     const baseUrl = () => {
         let base = process.env.REACT_APP_URL
@@ -20,24 +23,38 @@ function Dashboard() {
     };
 
     const listen = onAuthStateChanged(auth, function (user) {
-        setUid(user.uid)
-
-        console.log('Listening... uid' + uid)
-        if (uid && !userLinks) {
-            getAllLinksForUser()
+        console.log('[25] Listening... ')
+        if(user) {
+            console.log('[27] Listening... user. uid ' + user.uid)
+            setUid(user.uid)
+            console.log('[29] Listening... uid ' + uid)
         }
-        if (!user || uid === "" || uid === undefined) {
+        console.log('[31] Listening...  uid !== ""' + (uid !== ""))
+        console.log('[32] Listening...  uid !== id' + (uid !== id))
+        console.log('[33] Listening...  !userLinks' + (!userLinks))
+        console.log('[35] Listening...  uid !== id ' + (uid !== id))
+        console.log('[36] Listening...  id ' + (id))
+        console.log('[36] Listening...  !user ' + (!user))
+
+        if (!user || uid !== id ) {
             goToHome()
+        }
+        if (uid !== "" && uid === id && !userLinks) {
+            getAllLinksForUser()
         }
     });
 
     useEffect(() => {
-        listen()
+        // listen()
         console.log('Listening effect... ')
-        if (uid === "" || uid === undefined) {
-            goToHome()
-        }
-    }, [goToHome, listen, uid]);
+        // if (uid === "" || uid === undefined) {
+        //     goToHome()
+        // }
+
+        return () => {
+            listen()
+        };
+    }, [listen]);
 
     const getAllLinksForUser = async () => {
         const q = query(collection(db, dbPath), where("owner", "==", uid));

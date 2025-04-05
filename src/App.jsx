@@ -11,10 +11,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route
-                    path="/r/:id"
-                    element={<Redirect />}
+                <Route path="/dashboard/:id" element={<Dashboard />} />
+                <Route path="/r/:id" element={<Redirect />}
                 />
             </Routes>
         </Router>
