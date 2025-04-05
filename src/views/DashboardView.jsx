@@ -21,18 +21,23 @@ function Dashboard() {
 
     const listen = onAuthStateChanged(auth, function (user) {
         setUid(user.uid)
+
+        console.log('Listening... uid' + uid)
         if (uid && !userLinks) {
             getAllLinksForUser()
         }
-        if (!user) {
+        if (!user || uid === "" || uid === undefined) {
             goToHome()
         }
     });
 
     useEffect(() => {
-        return () => {
-        };
-    }, [listen]);
+        listen()
+        console.log('Listening effect... ')
+        if (uid === "" || uid === undefined) {
+            goToHome()
+        }
+    }, [goToHome, listen, uid]);
 
     const getAllLinksForUser = async () => {
         const q = query(collection(db, dbPath), where("owner", "==", uid));
