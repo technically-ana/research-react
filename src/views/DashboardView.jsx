@@ -23,19 +23,9 @@ function Dashboard() {
     };
 
     const listen = onAuthStateChanged(auth, function (user) {
-        console.log('[25] Listening... ')
         if(user) {
-            console.log('[27] Listening... user. uid ' + user.uid)
             setUid(user.uid)
-            console.log('[29] Listening... uid ' + uid)
         }
-        console.log('[31] Listening...  uid !== ""' + (uid !== ""))
-        console.log('[32] Listening...  uid !== id' + (uid !== id))
-        console.log('[33] Listening...  !userLinks' + (!userLinks))
-        console.log('[35] Listening...  uid !== id ' + (uid !== id))
-        console.log('[36] Listening...  id ' + (id))
-        console.log('[36] Listening...  !user ' + (!user))
-
         if (!user || uid !== id ) {
             goToHome()
         }
@@ -45,12 +35,6 @@ function Dashboard() {
     });
 
     useEffect(() => {
-        // listen()
-        console.log('Listening effect... ')
-        // if (uid === "" || uid === undefined) {
-        //     goToHome()
-        // }
-
         return () => {
             listen()
         };
