@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {auth, db} from "../firebase.js";
 import {onAuthStateChanged, signOut} from "firebase/auth";
 import {collection, addDoc, query, where, getDocs} from "firebase/firestore";
+import Login from "./LoginView.jsx";
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -15,11 +16,23 @@ function Dashboard() {
     const [longLink, setLongLink] = useState('');
     const [longLinkTitle, setLongLinkTitle] = useState('');
     const [userLinks, setUserLinks] = useState(null);
-    // const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const baseUrl = () => {
         let base = process.env.REACT_APP_URL
         return base + 'r/'
+    };
+
+    const validateURL = (e) => {
+        const value = e;
+        setLongLink(value);
+        try {
+            const u = new URL(value);
+            if (['https:'].includes(u.protocol)) setErrorMessage('')
+            else setErrorMessage('The link is incorrect or insecure');
+        } catch {
+            setErrorMessage('The link is incorrect or insecure');
+        }
     };
 
     const listen = onAuthStateChanged(auth, function (user) {
@@ -121,11 +134,18 @@ function Dashboard() {
                         rows="7"
                         value={longLink}
                         className="input"
-                        onChange={(e) => setLongLink(e.target.value)}
+                        onChange={(e) => validateURL(e.target.value)}
                     /></label>
             </div>
             <div className="padded center">
-                <button onClick={createShortLink} className="btn">Create Short Link</button>
+                <button onClick={createShortLink} disabled={errorMessage !== ''} className="btn">Create Short Link
+                </button>
+            </div>
+
+            <div className="center">
+                { errorMessage !== '' ?
+                    <p style={{ color: 'red' }}> { errorMessage } </p> :
+                    <p>Click on the link to copy</p>}
             </div>
 
             <ListOfLinks/>
