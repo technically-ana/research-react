@@ -9,16 +9,11 @@ function About() {
             <div className="center">
                 <div className="column is-6">
                     <div>
-                        <h1 className="title has-text-centered">About the App</h1>
+                        <h1 className="title has-text-centered">Application SecuReVue</h1>
 
                         <div className="content">
                             <div className="center">
-                                <p>This application is for educational purpose.</p>
-                            </div>
-                            <div className="center">
-                                <p className="has-text-centered is-size-4 has-text-weight-bold my-5">
-                                    {(new Date()).toISOString()}
-                                </p>
+                                <p>This application was created on 7th of April, 2025. For educational purpose.</p>
                             </div>
 
                             <div className="has-text-centered mt-5 center">
