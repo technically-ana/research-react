@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {auth, db} from "../firebase.js";
-import {onAuthStateChanged, signOut} from "firebase/auth";
+import { signOut } from "firebase/auth";
 import {collection, addDoc, query, where, getDocs} from "firebase/firestore";
 
 function Dashboard() {
@@ -34,23 +34,17 @@ function Dashboard() {
         }
     };
 
-    const listen = onAuthStateChanged(auth, function (user) {
-        if(user) {
-            setUid(user.uid)
+    useEffect(() => {
+        const currentUser = auth.currentUser;
+        if(currentUser) {
+            setUid(currentUser.uid)
         }
-        if (!user || uid !== id ) {
+        if (!currentUser || currentUser.uid !== id ) {
             goToHome()
         }
-        if (uid !== "" && uid === id && !userLinks) {
-            getAllLinksForUser()
-        }
-    });
-
-    useEffect(() => {
         return () => {
-            listen()
         };
-    }, [listen]);
+    }, [goToHome, id, uid]);
 
     const getAllLinksForUser = async () => {
         const q = query(collection(db, dbPath), where("owner", "==", uid));
@@ -76,6 +70,9 @@ function Dashboard() {
     }
 
     function ListOfLinks() {
+        if (uid !== "" && uid === id && !userLinks) {
+            getAllLinksForUser()
+        }
         return (
             <div>
                 {userLinks &&
