@@ -3,7 +3,6 @@ import React, {useEffect, useState} from "react";
 import {auth, db} from "../firebase.js";
 import {onAuthStateChanged, signOut} from "firebase/auth";
 import {collection, addDoc, query, where, getDocs} from "firebase/firestore";
-import Login from "./LoginView.jsx";
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -114,7 +113,7 @@ function Dashboard() {
     return (
         <div className="parent">
             <div className="center padded-bot">
-                <button className="btn btn-large" onClick={handleSignOut}> Logout</button>
+                <button className="btn btn-large" onClick={handleSignOut}> Log out</button>
             </div>
 
             <div className="padded center">

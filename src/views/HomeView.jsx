@@ -8,8 +8,6 @@ function Home() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // const listen = onAuthStateChanged(auth, (firebaseUser) => setIsLoggedIn(!!firebaseUser))
-
     useEffect(() => {
         return () => {
             onAuthStateChanged(auth, function (user) {
