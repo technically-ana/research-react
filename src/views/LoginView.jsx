@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom'
-import {auth} from "../firebase.js";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification} from "firebase/auth";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
+import { auth} from "../firebase.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 
 function Login() {
     const navigate = useNavigate();
@@ -105,7 +105,7 @@ function Login() {
                                 <button
                                     className="btn btn-large"
                                     type="submit">
-                                    {newUser ? 'Sign Up' : 'Login'}
+                                    {newUser ? 'Sign Up' : 'Log in'}
                                 </button>
                             </div>
 
