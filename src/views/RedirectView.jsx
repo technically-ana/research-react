@@ -1,34 +1,59 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useNavigate, useParams} from 'react-router-dom'
-import {db} from "../firebase.js";
+import {auth, db} from "../firebase.js";
 import {doc, getDoc} from "firebase/firestore";
+import { signInAnonymously } from "firebase/auth";
 
 function Redirect() {
     const navigate = useNavigate();
     const {id} = useParams();
 
-    const [targetUrl, setTargetUrl] = useState('')
+    function goToHome() {
+        navigate('/')
+    }
 
-    const docRef = doc(db, "short_links", id);
-
-    useEffect(() => {
-        async function fetchData() {
-            await getDoc(docRef)
-                .then((docSnap) => {
-                    setTargetUrl(docSnap.data().url)
-                });
+    const handleLogin = async () => {
+        if (!auth.currentUser) {
+            try {
+                await signInAnonymously(auth)
+                    .then(async () => {
+                        await fetchAndOpen()
+                    })
+                    // eslint-disable-next-line no-unused-vars
+                    .catch((_) => {
+                        goToHome();
+                    });
+                // eslint-disable-next-line no-unused-vars
+            } catch (_) {
+                goToHome();
+            }
+        } else if (auth.currentUser) {
+            await fetchAndOpen()
+        } else {
+            goToHome();
         }
+    };
 
-        fetchData();
-        if (targetUrl !== undefined && targetUrl !== "") window.location.href = targetUrl
-    }, [docRef, targetUrl]);
+
+    const fetchAndOpen = async () => {
+        const docRef = doc(db, "short_links", id);
+        await getDoc(docRef)
+            .then((docSnap) => {
+                if (docSnap.data().url !== "") {
+                    window.location.href = docSnap.data().url
+                } else {
+                    console.log("unknown source");
+                }
+            });
+    }
 
     return (
         <div>
             <h5>Redirecting...</h5>
-            <button onClick={() => navigate('/')} className="px-4 py-2 bg-green-500 text-white rounded-lg">Back to
-                Home
-            </button>
+            <div className="center">
+                <button onClick={handleLogin} className="btn">I'm human
+                </button>
+            </div>
         </div>
     );
 }
